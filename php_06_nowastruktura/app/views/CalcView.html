@@ -1,0 +1,83 @@
+{extends file="main.html"}
+{* przy zdefiniowanych folderach nie trzeba już podawać pełnej ścieżki *}
+
+{block name=footer}przykładowa tresć stopki wpisana do szablonu głównego z szablonu kalkulatora{/block}
+
+{block name=content}
+
+<h3>Prosty kalkulator</h2>
+
+
+<form class="pure-form pure-form-stacked" action="{$conf->action_root}calcCompute" method="post">
+	<fieldset>
+		<label for="id_kwota">Kwota kredytu: </label>
+		<input id="id_kwota" type="text" placeholder="kwota kredytu" name="kwota" value="{$form->kwota}">
+		
+		<label for="id_lata">Liczba lat: </label>
+		<input id="id_lata" type="text" name="lata" value="{$form->lata}">
+
+		<label for="op">Oprocentowanie</label>
+		<select id="op" name="op">
+
+{if isset($res->op_name)}
+<option value="{$form->op}">ponownie: {$res->op_name}</option>
+<option value="" disabled="true">---</option>
+{/if}
+			<option value="0.05">5%</option>
+			<option value="0.06">6%</option>
+			<option value="0.07">7%</option>
+			<option value="0.08">8%</option>
+		</select>
+					
+	</fieldset>
+	<button type="submit" class="pure-button pure-button-primary">Oblicz</button>
+</form>
+
+
+<div class="messages">
+
+{* wyświeltenie listy błędów, jeśli istnieją *}
+{if $msgs->isError()}
+	<h4>Wystąpiły błędy: </h4>
+	<ol class="err">
+	{foreach $msgs->getErrors() as $err}
+	{strip}
+		<li>{$err}</li>
+	{/strip}
+	{/foreach}
+	</ol>
+{/if}
+
+{* wyświeltenie listy informacji, jeśli istnieją *}
+{if $msgs->isInfo()}
+	<h4>Informacje: </h4>
+	<ol class="inf">
+	{foreach $msgs->getInfos() as $inf}
+	{strip}
+		<li>{$inf}</li>
+	{/strip}
+	{/foreach}
+	</ol>
+{/if}
+
+{if isset($res->result)}
+    <div class="res">
+        <h4>Wynik</h4>
+        
+        <div class="res">
+            <strong>Rata miesięczna:</strong> {$res->result|number_format:2:',':' '} zł
+        </div>
+        
+        <div class="res">
+            <strong>Całkowita kwota kredytu:</strong> {$res->calkowita|number_format:2:',':' '} zł
+        </div>
+        
+        <div class="res">
+            <strong>Odsetki:</strong> {$res->odsetki|number_format:2:',':' '} zł
+        </div>
+    </div>
+{/if}
+
+</div>
+
+{/block}
